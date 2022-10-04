@@ -3,7 +3,7 @@ import config
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, classification_report
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.inspection import permutation_importance
 
@@ -15,7 +15,12 @@ def continuous(y_test, predictions):
   }
 
 def category(y_test, predictions):
-  return classification_report(y_test, predictions, output_dict=True)
+  return [
+    accuracy_score(y_test, predictions, average='macro'),
+    precision_score(y_test, predictions, average='macro'),
+    recall_score(y_test, predictions, average='macro'),
+    f1_score(y_test, predictions, average='macro')
+  ]
 
 def feature_importance(model, X_test, y_test, features):
   result = permutation_importance(
