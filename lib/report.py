@@ -28,10 +28,10 @@ def feature_importance(model, X_test, y_test, features):
   )
   importances = pd.Series(result.importances_mean, index=features)
 
-  fig, ax = plt.subplots()
-  importances.plot.bar(yerr=result.importances_std, ax=ax)
-  fig.tight_layout()
-  return plt
+  return {
+    'result': result,
+    'importances': importances
+  }
 
 def cross_validation(model, X, y):
   kf = KFold(n_splits=config.k_fold, random_state=None) 
