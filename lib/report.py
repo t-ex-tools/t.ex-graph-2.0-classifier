@@ -15,12 +15,12 @@ def continuous(y_test, predictions):
   }
 
 def category(y_test, predictions):
-  return [
-    accuracy_score(y_test, predictions, average='macro'),
-    precision_score(y_test, predictions, average='macro'),
-    recall_score(y_test, predictions, average='macro'),
-    f1_score(y_test, predictions, average='macro')
-  ]
+  return {
+    'accuracy': accuracy_score(y_test, predictions, average='macro'),
+    'precision': precision_score(y_test, predictions, average='macro'),
+    'recall': recall_score(y_test, predictions, average='macro'),
+    'f1_score': f1_score(y_test, predictions, average='macro')
+  }
 
 def feature_importance(model, X_test, y_test, features):
   result = permutation_importance(
