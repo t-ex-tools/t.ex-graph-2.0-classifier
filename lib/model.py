@@ -31,5 +31,4 @@ def run_tests(models, dataset, features, target):
   X_train, X_test, y_train, y_test = data.split(X, y)
 
   for model in m:
-    x = classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features)
-    print (x)
+    return classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features)
