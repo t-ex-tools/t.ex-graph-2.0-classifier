@@ -30,5 +30,9 @@ def run_tests(models, dataset, features, target):
   m = models['continuous'] if continuous else models['category']
   X_train, X_test, y_train, y_test = data.split(X, y)
 
+  output = dict()
+  
   for model in m:
-    return classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features)
+    output = { **output, **classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features) }
+  
+  return output
