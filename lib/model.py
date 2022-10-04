@@ -1,6 +1,6 @@
 import functions, report, data
 
-def classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
+def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
   model.fit(X_train, y_train)
   predictions = model.predict(X_test)
 
@@ -20,9 +20,10 @@ def classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features
 
   output = dict()
   output[type(model).__name__] = result
+  output['continuous'] = continuous
   return output
 
-def run_tests(models, dataset, features, target):
+def test_models_on_dataset(models, dataset, features, target):
   X = dataset[features]
   y = dataset[target]
 
@@ -33,6 +34,18 @@ def run_tests(models, dataset, features, target):
   output = dict()
   
   for model in m:
-    output = { **output, **classify(model, continuous, X, y, X_train, X_test, y_train, y_test, features) }
+    output = { **output, **test(model, continuous, X, y, X_train, X_test, y_train, y_test, features) }
   
   return output
+
+def compute_results(datasets, models, features, targets):
+  results = {}
+
+  for target in targets:
+    for dataset in datasets:
+      if dataset.get('label') not in results:
+        results[dataset.get('label')] = dict()
+        
+      results[dataset.get('label')] = { **results[dataset.get('label')], **test_models_on_dataset(models, dataset.get('data'), features, target) }
+
+  return results
