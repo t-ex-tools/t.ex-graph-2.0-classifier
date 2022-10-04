@@ -5,6 +5,7 @@ def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
   predictions = model.predict(X_test)
 
   result = {
+    "continuous": continuous,
     "train_test": None,
     "feature_importance": None,
     "cross_validation": None
@@ -20,7 +21,7 @@ def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
 
   output = dict()
   output[type(model).__name__] = result
-  output['continuous'] = continuous
+
   return output
 
 def test_models_on_dataset(models, dataset, features, target):
