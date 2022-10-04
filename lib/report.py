@@ -16,7 +16,7 @@ def continuous(y_test, predictions):
 
 def category(y_test, predictions):
   return {
-    'accuracy': accuracy_score(y_test, predictions, average='macro'),
+    'accuracy': accuracy_score(y_test, predictions),
     'precision': precision_score(y_test, predictions, average='macro'),
     'recall': recall_score(y_test, predictions, average='macro'),
     'f1_score': f1_score(y_test, predictions, average='macro')
