@@ -67,4 +67,4 @@ def feature_importances(nrows, ncols, results, root):
       fig.autofmt_xdate(rotation=45)
       
       filename = 'feature-importances-' + key + '.pdf'
-      fig.savefig(join(root, filename))
+      fig.savefig(join(root, 'results', filename))
