@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
 
 
 def classification_results(results, root):
+    dir = join(root, config.results_dir, config.classifier_results_dir)
+    if not exists(dir):
+        mkdir(dir)
+    else:
+        for file in listdir(dir):
+            remove(join(dir, file))
+
     for key in results.keys():
         columns = {"continuous": [], "category": []}
 
@@ -29,14 +36,6 @@ def classification_results(results, root):
 
         for x in ["continuous", "category"]:
             df = pd.DataFrame(values[x], index=index[x], columns=columns[x])
-
-            dir = join(root, config.results_dir, config.classifier_results_dir)
-            if not exists(dir):
-                mkdir(dir)
-            else:
-                for file in listdir(dir):
-                    remove(join(dir, file))
-
             filename = key.replace("/", "-") + "-" + x + ".csv"
             df.to_csv(join(dir, filename), sep=",")
 
