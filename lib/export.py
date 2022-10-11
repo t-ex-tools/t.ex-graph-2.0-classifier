@@ -59,7 +59,7 @@ def aggregated_classification_results(root):
 def feature_importances(nrows, ncols, results, root):
     for key in results.keys():
         fig, ax = plt.subplots(
-            nrows=nrows, ncols=ncols, sharex=True, figsize=(12, 10), dpi=300
+            nrows=nrows, ncols=ncols, sharex=True, figsize=(12, 36), dpi=300
         )
 
         for index, model in enumerate(results.get(key)):
@@ -69,7 +69,7 @@ def feature_importances(nrows, ncols, results, root):
             )
 
             x = 0 if results.get(key).get(model).get("continuous") else 1
-            importances.plot.bar(yerr=result.importances_std, ax=ax[x, 0])
+            importances.plot.bar(yerr=result.importances_std, ax=ax[x, index % ncols])
             ax[x, index % ncols].set_title(model)
 
         ax[0, 0].set(ylabel="Predict weight")
