@@ -58,7 +58,7 @@ def aggregated_classification_results(root):
 def feature_importances(nrows, ncols, results, root):
     for key in results.keys():
         fig, ax = plt.subplots(
-            nrows=nrows, ncols=ncols, sharex=True, figsize=(12, 36), dpi=300
+            nrows=nrows, ncols=ncols, sharex=True, figsize=(36, 8), dpi=300
         )
 
         for index, model in enumerate(results.get(key)):
