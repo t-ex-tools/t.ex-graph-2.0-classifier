@@ -52,6 +52,7 @@ def aggregated_classification_results(root):
 
 def feature_importances(nrows, ncols, results, root):
     for key in results.keys():
+      print ("saassa")
       fig, ax = plt.subplots(nrows=nrows, ncols=ncols, sharex=True, figsize=(12, 10), dpi=300)
 
       for index, model in enumerate(results.get(key)):
@@ -66,5 +67,5 @@ def feature_importances(nrows, ncols, results, root):
       ax[1, 0].set(ylabel='Binary classification')
       fig.autofmt_xdate(rotation=45)
       
-      filename = 'feature-importances-' + key + '.pdf'
-      fig.savefig(join(root, 'results', filename))
+      filename = 'feature-importances-' + key.replace('/', '-') + '.pdf'
+      fig.savefig(join(root, filename))

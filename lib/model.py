@@ -1,52 +1,77 @@
-import functions, report, data
+import report
+import data
 
 def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
-  model.fit(X_train, y_train)
-  predictions = model.predict(X_test)
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
 
-  result = {
-    'continuous': continuous,
-    'train_test': None,
-    'feature_importance': None,
-    'cross_validation': None
-  }
+    result = {
+        'continuous': continuous,
+        'train_test': None,
+        'feature_importance': None,
+        'cross_validation': None
+    }
 
-  if continuous is True:
-    result['train_test'] = report.continuous(y_test, predictions)
-  else:
-    result['train_test'] = report.category(y_test, predictions)
+    if continuous is True:
+        result['train_test'] = report.continuous(y_test, predictions)
+    else:
+        result['train_test'] = report.category(y_test, predictions)
 
-  result['feature_importance'] = report.feature_importance(model, X_test, y_test, features)
-  result['cross_validation'] = report.cross_validation(model, X, y)
+    result['feature_importance'] = report.feature_importance(
+        model, X_test, y_test, features)
+    result['cross_validation'] = report.cross_validation(model, X, y)
 
-  output = dict()
-  output[type(model).__name__] = result
+    output = dict()
+    output[type(model).__name__] = result
 
-  return output
+    return output
+
 
 def test_models_on_dataset(models, dataset, features, target):
-  X = dataset[features]
-  y = dataset[target]
+    X = dataset[features]
+    y = dataset[target]
 
-  continuous = functions.is_continuous(y.dtype)
-  m = models['continuous'] if continuous else models['category']
-  X_train, X_test, y_train, y_test = data.split(X, y)
+    continuous = y.dtype == 'float64'
+    m = models['continuous'] if continuous else models['category']
+    X_train, X_test, y_train, y_test = data.split(X, y)
 
-  output = dict()
-  
-  for model in m:
-    output = { **output, **test(model, continuous, X, y, X_train, X_test, y_train, y_test, features) }
-  
-  return output
+    output = dict()
+
+    for model in m:
+        output = {
+            **output,
+            **test(
+                model,
+                continuous,
+                X,
+                y,
+                X_train,
+                X_test,
+                y_train,
+                y_test,
+                features
+            )
+        }
+
+    return output
+
 
 def compute_results(datasets, models, features, targets):
-  results = {}
+    results = {}
 
-  for target in targets:
-    for dataset in datasets:
-      if dataset.get('label') not in results:
-        results[dataset.get('label')] = dict()
-        
-      results[dataset.get('label')] = { **results[dataset.get('label')], **test_models_on_dataset(models, dataset.get('data'), features, target) }
+    for target in targets:
+        for dataset in datasets:
+            if dataset.get('label') not in results:
+                results[dataset.get('label')] = dict()
 
-  return results
+            results[dataset.get('label')] = {
+                **results[dataset.get('label')],
+                **test_models_on_dataset(
+                    models,
+                    dataset.get('data'),
+                    features,
+                    target
+                )
+            }
+
+    return results

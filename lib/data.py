@@ -1,13 +1,18 @@
-import functions, config
+import config
 
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 def read(path):
-  df = pd.read_csv(path, usecols=functions.excluder)
+  df = pd.read_csv(
+    path, 
+    usecols=lambda x : x.lower() not in config.excluded_cols
+  )
   df.columns= df.columns.str.lower()
+
   return df
 
 # NOTE: only for binary classification
@@ -27,3 +32,15 @@ def split(X, y):
   X_test = sc.transform(X_test)
 
   return X_train, X_test, y_train, y_test
+
+def feature_vector(df):
+  return [ col for col in list(df.columns) if col.lower() not in config.excluded_features ]
+
+def binary_classification_labels(col, df):
+  df[col] = np.where(df['weight'] > 0, 1, 0)
+
+def multi_classification_labels(col, df):
+  df[col] = np.select(
+    [ x['condition'] for x in config.multi_labels(df) ], 
+    [ x['label'] for x in config.multi_labels(df) ], 
+  )
