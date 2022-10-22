@@ -1,13 +1,22 @@
-import report
+from collections import Counter
+
+import numpy as np
+import pandas as pd
+
 import data
+import report
 
 
-def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
+def test(
+    model, continuous, X, y, X_train, X_test, y_train, y_test, features, target, dataset
+):
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
 
+    # df.to_csv('./pred.csv')
+
     result = {
-        "continuous": continuous,
+        "target": target,
         "train_test": None,
         "feature_importance": None,
         "cross_validation": None,
@@ -21,6 +30,7 @@ def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
     result["feature_importance"] = report.feature_importance(
         model, X_test, y_test, features
     )
+
     result["cross_validation"] = report.cross_validation(model, X, y)
 
     output = dict()
@@ -32,17 +42,27 @@ def test(model, continuous, X, y, X_train, X_test, y_train, y_test, features):
 def test_models_on_dataset(models, dataset, features, target):
     X = dataset[features]
     y = dataset[target]
-
-    continuous = y.dtype == "float64"
-    m = models["continuous"] if continuous else models["category"]
     X_train, X_test, y_train, y_test = data.split(X, y)
 
+    continuous = y.dtype == "float64"
     output = dict()
 
-    for model in m:
+    for model in models[target]:
         output = {
             **output,
-            **test(model, continuous, X, y, X_train, X_test, y_train, y_test, features),
+            **test(
+                model,
+                continuous,
+                X,
+                y,
+                X_train,
+                X_test,
+                y_train,
+                y_test,
+                features,
+                target,
+                dataset,
+            ),
         }
 
     return output
@@ -56,8 +76,11 @@ def compute_results(datasets, models, features, targets):
             if dataset.get("label") not in results:
                 results[dataset.get("label")] = dict()
 
-            results[dataset.get("label")] = {
-                **results[dataset.get("label")],
+            if target not in results[dataset.get("label")]:
+                results[dataset.get("label")][target] = dict()
+
+            results[dataset.get("label")][target] = {
+                **results[dataset.get("label")][target],
                 **test_models_on_dataset(models, dataset.get("data"), features, target),
             }
 

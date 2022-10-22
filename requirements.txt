@@ -1,0 +1,6 @@
+pandas
+matplotlib>=3.6.0
+seaborn
+scikit-learn
+scikit-learn-intelex
+imbalanced-learn

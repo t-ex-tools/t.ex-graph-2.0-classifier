@@ -1,14 +1,16 @@
-import config
-
-import pandas as pd
 import numpy as np
-
+import pandas as pd
+from imblearn.over_sampling import BorderlineSMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+import config
+
 
 def read(path):
-    df = pd.read_csv(path, usecols=lambda x: x.lower() not in config.excluded_cols)
+    df = pd.read_csv(
+        path, usecols=lambda x: x.lower() not in config.excluded_cols, index_col=False
+    )
     df.columns = df.columns.str.lower()
 
     return df
@@ -27,8 +29,11 @@ def sample_equal_distribution(df, col):
 
 
 def split(X, y):
+    oversample = BorderlineSMOTE()
+    X, y = oversample.fit_resample(X, y)
+
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, shuffle=True, train_size=config.train_size
+        X, y, train_size=config.train_size
     )
 
     sc = StandardScaler()
@@ -45,7 +50,7 @@ def feature_vector(df):
 
 
 def binary_classification_labels(col, df):
-    df[col] = np.where(df["weight"] > 0, 1, 0)
+    df[col] = np.where(df[config.tracking_ratio] > 0, 1, 0)
 
 
 def multi_classification_labels(col, df):
