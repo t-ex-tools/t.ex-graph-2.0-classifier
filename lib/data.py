@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from imblearn.over_sampling import BorderlineSMOTE
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
 import config
 
@@ -28,17 +27,13 @@ def sample_equal_distribution(df, col):
     )
 
 
-def split(X, y):
-    oversample = BorderlineSMOTE()
-    X, y = oversample.fit_resample(X, y)
+def split(X, y, smote):
+    if smote is True:
+      X, y = BorderlineSMOTE().fit_resample(X, y)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, train_size=config.train_size
     )
-
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
-    X_test = sc.transform(X_test)
 
     return X_train, X_test, y_train, y_test
 

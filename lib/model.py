@@ -1,19 +1,24 @@
-from collections import Counter
+from sklearn.preprocessing import StandardScaler
 
-import numpy as np
-import pandas as pd
-
+import export
 import data
 import report
 
 
 def test(
-    model, continuous, X, y, X_train, X_test, y_train, y_test, features, target, dataset
+    model, continuous, X, y, X_train, X_test, y_train, y_test, features, target, dataset, root
 ):
-    model.fit(X_train, y_train)
-    predictions = model.predict(X_test)
 
-    # df.to_csv('./pred.csv')
+    sc = StandardScaler()
+    X_train_scaled = sc.fit_transform(X_train)
+    X_test_scaled = sc.transform(X_test)
+
+    model.fit(X_train_scaled, y_train)
+    predictions = model.predict(X_test_scaled)
+
+    model_name = type(model).__name__
+    if dataset['smote'] is False:
+      export.misclassifications(dataset, X_test, predictions, target, model_name, root)
 
     result = {
         "target": target,
@@ -28,21 +33,22 @@ def test(
         result["train_test"] = report.category(y_test, predictions)
 
     result["feature_importance"] = report.feature_importance(
-        model, X_test, y_test, features
+        model, X_test.values, y_test, features
     )
 
     result["cross_validation"] = report.cross_validation(model, X, y)
-
+    
     output = dict()
-    output[type(model).__name__] = result
+    output[model_name] = result
 
     return output
 
 
-def test_models_on_dataset(models, dataset, features, target):
-    X = dataset[features]
-    y = dataset[target]
-    X_train, X_test, y_train, y_test = data.split(X, y)
+def test_models_on_dataset(models, dataset, features, target, root):
+    df = dataset['data']
+    X = df[features]
+    y = df[target]
+    X_train, X_test, y_train, y_test = data.split(X, y, dataset['smote'])
 
     continuous = y.dtype == "float64"
     output = dict()
@@ -62,13 +68,14 @@ def test_models_on_dataset(models, dataset, features, target):
                 features,
                 target,
                 dataset,
+                root
             ),
         }
 
     return output
 
 
-def compute_results(datasets, models, features, targets):
+def compute_results(datasets, models, features, targets, root):
     results = {}
 
     for target in targets:
@@ -81,7 +88,7 @@ def compute_results(datasets, models, features, targets):
 
             results[dataset.get("label")][target] = {
                 **results[dataset.get("label")][target],
-                **test_models_on_dataset(models, dataset.get("data"), features, target),
+                **test_models_on_dataset(models, dataset, features, target, root),
             }
 
     return results

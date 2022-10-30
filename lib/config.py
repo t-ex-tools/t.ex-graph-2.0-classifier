@@ -1,6 +1,7 @@
 tracking_ratio = "tracking"
 binary_tracker = "binary_tracker"
 multi_tracker = "multi_tracker"
+pred_col = 'prediction'
 
 excluded_cols = [
     "label",
@@ -38,3 +39,4 @@ results_dir = "results"
 classifier_results_dir = "classification"
 feature_importances_dir = "feature_importances"
 cross_validation_dir = "cross_validation"
+misclassifications_dir = "misclassifications"
