@@ -1,4 +1,5 @@
 from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import BorderlineSMOTE
 
 import export
 import data
@@ -6,19 +7,13 @@ import report
 
 
 def test(
-    model, continuous, X, y, X_train, X_test, y_train, y_test, features, target, dataset, root
+    model, continuous, X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled, features, target, dataset, root
 ):
-
-    sc = StandardScaler()
-    X_train_scaled = sc.fit_transform(X_train)
-    X_test_scaled = sc.transform(X_test)
-
     model.fit(X_train_scaled, y_train)
     predictions = model.predict(X_test_scaled)
 
     model_name = type(model).__name__
-    if dataset['smote'] is False:
-      export.misclassifications(dataset, X_test, predictions, target, model_name, root)
+    export.misclassifications(dataset, X_test, predictions, target, model_name, root)
 
     result = {
         "target": target,
@@ -32,11 +27,13 @@ def test(
     else:
         result["train_test"] = report.category(y_test, predictions)
 
+    """
     result["feature_importance"] = report.feature_importance(
         model, X_test.values, y_test, features
     )
 
     result["cross_validation"] = report.cross_validation(model, X, y)
+    """
     
     output = dict()
     output[model_name] = result
@@ -48,7 +45,14 @@ def test_models_on_dataset(models, dataset, features, target, root):
     df = dataset['data']
     X = df[features]
     y = df[target]
-    X_train, X_test, y_train, y_test = data.split(X, y, dataset['smote'])
+    X_train, X_test, y_train, y_test = data.split(X, y)
+
+    if dataset['smote'] is True:
+        X_train, y_train = BorderlineSMOTE().fit_resample(X_train, y_train)
+
+    sc = StandardScaler()
+    X_train_scaled = sc.fit_transform(X_train)
+    X_test_scaled = sc.transform(X_test)        
 
     continuous = y.dtype == "float64"
     output = dict()
@@ -59,12 +63,12 @@ def test_models_on_dataset(models, dataset, features, target, root):
             **test(
                 model,
                 continuous,
-                X,
-                y,
                 X_train,
                 X_test,
                 y_train,
                 y_test,
+                X_train_scaled,
+                X_test_scaled,
                 features,
                 target,
                 dataset,
