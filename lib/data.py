@@ -9,6 +9,7 @@ def read(path):
         path, usecols=lambda x: x.lower() not in config.excluded_cols, index_col=False
     )
     df.columns = df.columns.str.lower()
+    df = df.loc[:, (df != 0).any(axis=0)]
 
     return df
 
