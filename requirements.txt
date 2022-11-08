@@ -4,3 +4,4 @@ seaborn
 scikit-learn
 scikit-learn-intelex
 imbalanced-learn
+xgboost

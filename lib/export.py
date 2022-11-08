@@ -34,7 +34,7 @@ def misclassifications(dataset, X_test, predictions, target, model, root):
     df = dataset['data'].merge(pred,how='left', left_index=True, right_index=True)
     df = df[df[config.pred_col].notnull()]
     df = df[df[target] != df[config.pred_col]]
-    df = df[['id', target, config.pred_col]]
+    df = df[['id'] + config.included_features + [target, config.pred_col]]
     path = join(
       root, 
       config.results_dir, 
