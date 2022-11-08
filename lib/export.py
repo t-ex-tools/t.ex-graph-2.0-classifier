@@ -1,11 +1,9 @@
 from os import listdir, makedirs, remove
-from os.path import join, exists
+from os.path import exists, join
 
 import config
-
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 
 
 def mkdir_p(path):
@@ -30,20 +28,16 @@ def save_csv(df, path, dataset_name):
 
 
 def misclassifications(dataset, X_test, predictions, target, model, root):
-    pred = pd.DataFrame(data=predictions, columns=[config.pred_col], index=X_test.index.copy())
-    df = dataset['data'].merge(pred,how='left', left_index=True, right_index=True)
+    pred = pd.DataFrame(
+        data=predictions, columns=[config.pred_col], index=X_test.index.copy()
+    )
+    df = dataset["data"].merge(pred, how="left", left_index=True, right_index=True)
     df = df[df[config.pred_col].notnull()]
     df = df[df[target] != df[config.pred_col]]
-    df = df[['id'] + config.included_features + [target, config.pred_col]]
-    path = join(
-      root, 
-      config.results_dir, 
-      config.misclassifications_dir, 
-      target, 
-      model
-    )
+    df = df[["id"] + config.included_features + [target, config.pred_col]]
+    path = join(root, config.results_dir, config.misclassifications_dir, target, model)
     mkdir_p(path)
-    filename = 'misclassifications-' + dataset['label'].replace("/", "-") + '.csv'
+    filename = "misclassifications-" + dataset["label"].replace("/", "-") + ".csv"
     df.to_csv(join(path, filename))
 
 
@@ -79,9 +73,9 @@ def feature_importances(results, root):
                 )
                 result = scores.get("result")
                 importances = scores.get("importances")
-                
+
                 importances.plot.bar(yerr=result.importances_std, ax=axes)
-                axes.set_title('Feature importances for ' + model + ' on ' + key)
+                axes.set_title("Feature importances for " + model + " on " + key)
                 axes.set_ylabel("Mean decrease in impurity")
 
                 fig.autofmt_xdate(rotation=45)

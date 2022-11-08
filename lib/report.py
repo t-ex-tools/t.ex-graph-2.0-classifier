@@ -1,12 +1,10 @@
+import config
 import pandas as pd
-from matplotlib import pyplot as plt
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import (accuracy_score, f1_score, mean_absolute_error,
                              mean_squared_error, precision_score, r2_score,
                              recall_score)
 from sklearn.model_selection import KFold, cross_val_score
-
-import config
 
 
 def continuous(y_test, predictions):

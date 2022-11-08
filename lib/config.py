@@ -1,27 +1,18 @@
 tracking_ratio = "tracking"
 binary_tracker = "binary_tracker"
 multi_tracker = "multi_tracker"
-pred_col = 'prediction'
+pred_col = "prediction"
 
 excluded_cols = [
     "label",
     "timeset",
     "weighted indegree",
     "weighted outdegree",
-    "weighted degree"
+    "weighted degree",
 ]
-excluded_features = [
-  "id", 
-  "tracking", 
-  tracking_ratio, 
-  binary_tracker, 
-  multi_tracker
-]
+excluded_features = ["id", "tracking", tracking_ratio, binary_tracker, multi_tracker]
 
-included_features = [
-  "count",
-  tracking_ratio
-]
+included_features = ["count", tracking_ratio]
 
 train_size = 0.8
 k_fold = 10
