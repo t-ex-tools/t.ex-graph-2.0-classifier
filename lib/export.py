@@ -24,7 +24,7 @@ def save_csv(df, path, dataset_name):
     mkdir_p(path)
 
     filename = dataset_name.replace("/", "-") + ".csv"
-    df.to_csv(join(path, filename), sep=",")
+    df.to_csv(join(path, filename), sep=",", index=False)
 
 
 def misclassifications(dataset, X_test, predictions, target, model, root):
