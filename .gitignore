@@ -181,3 +181,4 @@ results/
 *.gexf
 .vscode/
 *.gexf*
+models/

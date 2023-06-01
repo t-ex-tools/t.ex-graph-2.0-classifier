@@ -1,5 +1,6 @@
 from os import listdir, makedirs, remove
 from os.path import exists, join
+from joblib import dump
 
 import config
 import matplotlib.pyplot as plt
@@ -104,3 +105,8 @@ def cross_validation(results, root):
             if len(models) > 0:
                 df = pd.DataFrame(values, columns=columns)
                 save_csv(df, join(dir, target), key)
+
+def model(model, dataset_label, model_name, root):
+    path = join(root, 'models', dataset_label)
+    mkdir_p(path)
+    dump(model, join(path, model_name + '.sav'))
