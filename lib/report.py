@@ -35,5 +35,5 @@ def feature_importance(model, X_test, y_test, features):
 
 def cross_validation(model, X, y):
     kf = KFold(n_splits=config.k_fold, shuffle=True, random_state=42)
-    result = cross_val_score(model, X, y, cv=kf)
+    result = cross_val_score(model, X, y, scoring="f1", cv=kf)
     return format(result.mean())
