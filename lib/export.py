@@ -106,7 +106,29 @@ def cross_validation(results, root):
                 df = pd.DataFrame(values, columns=columns)
                 save_csv(df, join(dir, target), key)
 
+
 def model(model, dataset_label, model_name, root):
     path = join(root, 'models', dataset_label)
     mkdir_p(path)
     dump(model, join(path, model_name + '.sav'))
+
+
+def pretty_results(root, datasets):
+
+  dir = join(
+    root, 
+    config.results_dir, 
+    config.classifier_results_dir,
+    config.binary_tracker
+  )
+
+  output = []
+
+  for dataset in datasets:
+    output.append(
+      pd.read_csv(
+        join(dir, dataset['label'] + '-pretty.csv')
+      )
+    )
+
+  return output

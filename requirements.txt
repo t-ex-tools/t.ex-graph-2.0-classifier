@@ -4,4 +4,4 @@ seaborn
 scikit-learn
 scikit-learn-intelex
 imbalanced-learn
-xgboost
+xgboost==1.5.1
